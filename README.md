@@ -1,24 +1,11 @@
-# ai-interview-preparation
-# AI Interview Preparation Platform
+## Discription
 
-An AI-powered web application that helps users prepare for interviews by generating:
+-This project is an AI-powered interview preparation    platform that helps job seekers prepare effectively for technical interviews. 
 
-- Technical interview questions
-- Behavioral interview questions
-- Personalized preparation roadmap
-- Resume-based interview analysis
-- Resume PDF generation
+-Users can upload their resumes and analyze job descriptions to identify skill gaps. 
+The platform generates AI-based technical and behavioral interview questions, provides a personalized preparation roadmap, and creates ATS-optimized resumes to improve job application success.
 
----
-
-## Features
-
-- Upload your resume
-- Generate interview questions using AI
-- View technical and behavioral questions
-- Get a preparation roadmap
-- Download AI-generated resume PDF
-- Authentication system (Login/Register)
+-The goal of this project is to simulate a real-world product that assists candidates in preparing for interviews using artificial intelligence.
 
 ---
 
