@@ -1,4 +1,4 @@
-# ⚡ PrepAI — AI-Powered Personalized Interview Preparation Platform
+# ⚡ PrepAI — AI-Powered Interview Preparation Platform
 
 PrepAI is a production-grade AI-powered interview preparation and simulated mock interview platform. It guides candidates through the complete journey: from analyzing their resume against a target job description to uncover skill gaps and build a personalized roadmap, to clearing doubts with a context-aware AI mentor, and finally practicing in real-time, time-aware AI mock interviews with comprehensive multi-dimensional evaluations and downloadable PDF reports.
 
