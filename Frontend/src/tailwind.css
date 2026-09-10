@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-surface: #f8f9ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #d3e4fe;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-tint: #4f46e5;
+  --color-background: #f8f9ff;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #64748b;
+  --color-on-background: #0f172a;
+  --color-primary: #4f46e5;
+  --color-primary-container: #4338ca;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #ffffff;
+  --color-secondary: #059669;
+  --color-secondary-container: #39b8fd;
+  --color-on-secondary: #ffffff;
+  --color-tertiary: #7c3aed;
+  --color-tertiary-container: #6f3dd9;
+  --color-on-tertiary: #ffffff;
+  --color-error: #dc2626;
+  --color-on-error: #ffffff;
+  --color-error-container: #fee2e2;
+  --color-on-error-container: #991b1b;
+  --color-outline: #94a3b8;
+  --color-outline-variant: #cbd5e1;
+  --color-inverse-surface: #213145;
+  --color-inverse-primary: #c3c0ff;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-canvas-base: #f8fafc;
+  --color-canvas-subtle: #f1f5f9;
+  --color-border-strong: rgba(203, 213, 225, 0.9);
+  --color-border-subtle: rgba(226, 232, 240, 0.8);
+  --color-border-hairline: rgba(226, 232, 240, 0.6);
+  --color-semantic-error: #dc2626;
+  --color-semantic-info: #0284c7;
+  --color-semantic-success: #059669;
+  --color-semantic-warning: #d97706;
+
+  /* Spacing */
+  --spacing-space-2xs: 0.125rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 0.75rem;
+  --spacing-space-base: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2rem;
+  --spacing-space-2xl: 3rem;
+  --spacing-space-3xl: 4rem;
+  --spacing-gutter-mobile: 1rem;
+  --spacing-gutter-desktop: 1.5rem;
+  --spacing-rail-width: 64px;
+  --spacing-sidebar-width: 260px;
+  --spacing-max-width-console: 1440px;
+
+  /* Font Family */
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-code: "JetBrains Mono", monospace;
+}

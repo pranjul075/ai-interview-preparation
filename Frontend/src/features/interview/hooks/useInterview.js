@@ -48,13 +48,10 @@ export const useInterview = () => {
             setReport(response.interviewReport)
 
         } catch (error) {
-
             console.log("Report generation error:", error)
-
+            throw error
         } finally {
-
             setLoading(false)
-
         }
 
         return response?.interviewReport

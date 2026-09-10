@@ -1,8 +1,8 @@
 @use "./style/button.scss";
 
-* {
-    margin: 0%;
-    padding: 0%;
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -10,11 +10,18 @@ html,
 body,
 #root {
     width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Dark theme only for authenticated app pages (not auth/landing) */
+.app-dark {
     background-color: #161616;
     color: whitesmoke;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-.highlight{
+.highlight {
     color: #d20d3b;
 }

@@ -301,7 +301,7 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, $accent 0%, darken($accent, 10%) 100%);
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
     color: #fff;
     font-size: 0.9rem;
     font-weight: 600;
@@ -320,40 +320,238 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     }
 }
 
-.recent-reports{
+// ── Quick Feature Action Cards ───────────────────────────────────────────────
+.dashboard-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 900px;
+
+    .action-card {
+        background: #161b22;
+        border: 1px solid #282f42;
+        border-radius: 0.85rem;
+        padding: 1.4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        text-decoration: none;
+
+        &:hover {
+            border-color: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-card__icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .action-card__title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 0.4rem;
+        }
+
+        .action-card__desc {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .action-card__cta {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        &--highlight {
+            border-color: rgba(225, 29, 72, 0.4);
+            background: linear-gradient(135deg, #181b26 0%, #201724 100%);
+
+            .action-card__cta {
+                color: #fda4af;
+            }
+        }
+    }
+}
+
+// ── Performance Comparison Card ──────────────────────────────────────────────
+.performance-widget {
+    width: 100%;
+    max-width: 900px;
+    background: linear-gradient(135deg, #131722 0%, #1a1f2e 100%);
+    border: 1px solid #2e3b55;
+    border-radius: 0.85rem;
+    padding: 1.5rem;
+
+    .widget-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        h3 {
+            font-size: 1.05rem;
+            color: #f8fafc;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sub-tag {
+            font-size: 0.75rem;
+            color: #38bdf8;
+            font-weight: 700;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+        }
+    }
+
+    .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+
+        .comp-item {
+            background: #0f121a;
+            border: 1px solid #242c3d;
+            border-radius: 0.6rem;
+            padding: 0.85rem;
+
+            .comp-label {
+                font-size: 0.8rem;
+                color: #94a3b8;
+                font-weight: 600;
+                margin-bottom: 0.35rem;
+            }
+
+            .comp-values {
+                display: flex;
+                align-items: baseline;
+                gap: 0.5rem;
+
+                .val-before {
+                    font-size: 0.95rem;
+                    color: #64748b;
+                }
+
+                .val-arrow {
+                    font-size: 0.85rem;
+                    color: #94a3b8;
+                }
+
+                .val-now {
+                    font-size: 1.25rem;
+                    font-weight: 800;
+                    color: #f8fafc;
+                }
+
+                .val-delta {
+                    font-size: 0.8rem;
+                    font-weight: 800;
+
+                    &--pos {
+                        color: #10b981;
+                    }
+
+                    &--neg {
+                        color: #ef4444;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ── Recent Reports ────────────────────────────────────────────────────────────
+.recent-reports {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     width: 100%;
     max-width: 900px;
 
-    .reports-list{
+    h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #f8fafc;
+    }
+
+    .reports-list {
         display: flex;
         gap: 0.75rem;
         flex-wrap: wrap;
 
-        .report-item{
+        .report-item {
             background-color: $bg-card;
             border: 1px solid $border-color;
-            border-radius: 0.5rem;
-            padding: 1rem;
+            border-radius: 0.6rem;
+            padding: 1.1rem;
             flex: 1;
+            min-width: 250px;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             cursor: pointer;
-            flex-shrink: 0;
+            transition: all 0.2s ease;
+
+            &:hover {
+                border-color: #38bdf8;
+                transform: translateY(-1px);
+            }
+
+            h3 {
+                font-size: 1rem;
+                color: #f8fafc;
+            }
+
+            .report-meta {
+                font-size: 0.8rem;
+                color: #94a3b8;
+            }
 
             .match-score {
-                font-size: 0.8rem;
-                font-weight: 600;
+                font-size: 0.85rem;
+                font-weight: 700;
                 color: $accent;
-                align-items: flex-start;
+            }
+
+            .mock-meta-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 0.35rem;
+
+                .mock-score {
+                    font-size: 1rem;
+                    font-weight: 800;
+                    color: #38bdf8;
+                }
+
+                .mock-readiness {
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    padding: 0.2rem 0.5rem;
+                    border-radius: 0.35rem;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: #34d399;
+                }
             }
         }
     }
 }
-
 
 // ── Page Footer ───────────────────────────────────────────────────────────────
 .page-footer {

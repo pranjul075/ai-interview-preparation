@@ -1,108 +1,143 @@
-# 🤖 Prep AI – AI Interview Preparation Platform
+# ⚡ PrepAI — AI-Powered Personalized Interview Preparation & Mock Interview Platform
 
-Prep AI is a high-performance AI-powered interview preparation platform designed to help candidates prepare smarter and more efficiently for technical and behavioral interviews. The system analyzes user resumes against target job descriptions to identify skill gaps and generates personalized interview preparation strategies.
-
-By leveraging Generative AI (Google Gemini / OpenAI APIs), Prep AI transforms unstructured resume data into actionable insights. It enables users to practice with real-world interview questions, improve weak areas, and increase their chances of success in modern hiring pipelines.
+PrepAI is a production-grade AI-powered interview preparation and simulated mock interview platform. It guides candidates through the complete journey: from analyzing their resume against a target job description to uncover skill gaps and build a personalized roadmap, to clearing doubts with a context-aware AI mentor, and finally practicing in real-time, time-aware AI mock interviews with comprehensive multi-dimensional evaluations and downloadable PDF reports.
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-- 📄 AI-Powered Resume Parsing & Analysis – Extracts key information such as skills, projects, and experience from uploaded resumes.  
-- 📊 Job Description Matching & Skill Gap Detection – Compares resumes with job descriptions to identify missing skills using semantic analysis.  
-- 🧠 Dynamic Interview Question Generation – Generates role-specific technical and behavioral interview questions using AI.  
-- 💬 AI-Based Answer Evaluation (Future Ready) – Analyzes responses and provides feedback with improvement suggestions.  
-- 🗺️ Personalized Preparation Roadmap – Creates structured, day-by-day preparation plans based on skill gaps.  
-- 📝 ATS-Optimized Resume Generation – Generates professional resumes optimized for Applicant Tracking Systems (ATS).  
-- 🔄 Real-Time AI Processing & Feedback Loop – Continuously adapts recommendations based on user interaction.  
-- ⚡ Modern Responsive UI – Fast, interactive, and user-friendly interface built with React.  
-- 🔐 Secure Authentication System – Implements JWT-based authentication and secure API communication.  
+### 📄 1. Resume & Job Description Analysis
+- **PDF Resume Upload & Text Extraction**: Parses resumes (up to 5MB PDF) and extracts key skills, projects, and domain experience.
+- **Match Score & Skill Gap Detection**: Calculates candidate-to-job match percentage (0–100%) and highlights missing competencies tagged by severity (`low`, `medium`, `high`).
+- **Dynamic Question Generation**: Generates targeted technical and behavioral interview questions with the interviewer's intention and model answers.
+- **Personalized Preparation Roadmap**: Generates a structured, day-by-day preparation schedule focused on eliminating detected skill gaps.
+
+### 💬 2. PrepAI Assistant (AI Doubt Solver)
+- **Context-Aware Mentorship**: Grounded in the candidate's active interview report context (target job description, match score, detected skill gaps, and generated questions).
+- **Interactive Technical Coaching**: Solves conceptual doubts, explains system design trade-offs, and provides concrete coding or STAR-method examples.
+- **Strict Domain Focus**: Dedicated to technical mastery, HR strategy, and candidate preparation rather than behaving like a generic chatbot.
+
+### 🎯 3. Full AI Mock Interview Agent
+- **Flexible Configuration**: Choose 10, 20, or 30-minute sessions across Technical, HR / Behavioral, Mixed, or Job-specific interview tracks with Easy, Medium, Hard, or Adaptive difficulty.
+- **Realistic Interviewer Simulation**: Introduces the session, sets expectations, asks one question at a time, and actively listens to candidate answers.
+- **Adaptive Follow-Up Questioning**: Acknowledges candidate responses and dynamically probes deeper into incomplete answers or transitions naturally across core topics without disrupting the candidate with mid-session score cards.
+- **Synchronized Dual-Timer System**: Client-side countdown timer synchronized with strict server-side timestamp validation (`startedAt`, `expiresAt`, `completedAt`).
+
+### 📊 4. Comprehensive Post-Interview Evaluation & PDF Reports
+- **Holistic Session Assessment**: When the interview concludes or time expires, the AI evaluates the complete transcript across 6 core dimensions (0–100):
+  - **Technical Knowledge**
+  - **Problem Solving & Critical Thinking**
+  - **Communication Clarity**
+  - **Answer Relevance**
+  - **Depth & Architectural Trade-offs**
+  - **Project & Practical Experience**
+- **Actionable Feedback**: Delivers an executive assessment, demonstrated strengths, specific weaknesses, topics requiring reinforcement, and actionable preparation steps.
+- **Interview Readiness Rating**: Clear classification (`Needs Significant Improvement`, `Developing`, `Almost Ready`, `Interview Ready`).
+- **Downloadable PDF Reports**: Professional evaluation reports exported via headless Puppeteer with PrepAI branding.
+- **ATS Resume Generation**: Generates clean, ATS-optimized resumes downloadable as PDFs.
+
+### 📈 5. Interview History & Performance Comparison
+- **Session Tracking**: Track previous mock interviews and resume analyses on the unified dashboard.
+- **Growth Trends**: Automatically computes and visualizes verified performance improvement across mock interview attempts.
 
 ---
 
 ## 🧠 Tech Stack
 
-**Frontend:** React.js, Vite, SCSS  
-**Backend:** Node.js, Express.js, MongoDB  
-**AI & Processing:** Google Gemini API / OpenAI API, Prompt Engineering, Resume Parsing, Semantic Analysis  
+- **Frontend**: React 19, Vite, React Router 7, SCSS, Axios
+- **Backend**: Node.js, Express 5, MongoDB, Mongoose 9, JWT Authentication, bcryptjs, Multer, Puppeteer, Zod
+- **AI Engine**: Groq Cloud API (`groq-sdk`, `llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
 
 ---
 
 ## 🏗️ System Architecture
 
-User (Browser) → React Frontend → Node.js + Express Backend → AI Layer (Gemini/OpenAI) → AI Processing (Resume Analysis, Question Generation, Feedback) → Structured Response → Frontend  
+```
+Candidate (Browser)
+       │
+       ▼
+React 19 Frontend (Vite + SCSS)
+       │ (REST APIs + HttpOnly Cookies)
+       ▼
+Node.js & Express Backend
+       ├── Auth Middleware (JWT + Token Blacklist)
+       ├── File Middleware (Multer, 5MB PDF Filter)
+       ├── Mock Interview Controller (Dual-Timer, Session Lifecycle)
+       ├── AI Service Layer (Groq SDK + Zod Validation + Resilience)
+       └── Report Engine (Puppeteer Headless PDF Generator)
+       │
+       ├── MongoDB (Users, InterviewReports, MockInterviews, BlacklistedTokens)
+       └── Groq Cloud (Llama 3.3 70B Versatile for high-speed inference)
+```
 
 ---
 
-## 📂 Project Structure
+## ⚙️ Environment Configuration
 
-prep-ai  
-├── Frontend/  (React application)  
-└── Backend/   (Node.js API server)  
+Create a `.env` file in the `Backend` directory (see `.env.example`):
+
+```env
+# MongoDB Connection URI
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/prepai
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/prepai
+
+# Server Port
+PORT=3000
+
+# JWT Authentication Secret
+JWT_SECRET=your_super_secret_jwt_key_here
+
+# Groq Cloud API Key (Get a free key at https://console.groq.com)
+GROQ_API_KEY=gsk_your_groq_api_key_here
+
+# Groq Model (Default: llama-3.3-70b-versatile)
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+For the `Frontend` (optional custom API URL):
+```env
+VITE_API_URL=http://localhost:3000
+```
 
 ---
 
-## ⚙️ Installation
+## 🚀 Getting Started
 
-Clone the repository:
+### 1. Clone the repository
 ```bash
 git clone https://github.com/pranjul075/ai-interview-preparation.git
+cd ai-interview-preparation
 ```
 
-Setup Frontend:
-```bash
-cd Frontend
-npm install
-npm run dev
-```
-
-Setup Backend:
+### 2. Setup and run Backend
 ```bash
 cd Backend
 npm install
 npm run dev
 ```
+The server will start on `http://localhost:3000`.
+
+### 3. Setup and run Frontend
+```bash
+cd ../Frontend
+npm install
+npm run dev
+```
+The client will start on `http://localhost:5173`.
 
 ---
 
-## 📸 Screenshots
+## 🔐 Security & Architecture Highlights
 
-Add screenshots of:
-- Dashboard  
-- Resume Analysis  
-- Interview Questions Page  
-- Generated Resume  
-
----
-
-## 🔮 Future Improvements
-
-- 🎙️ Voice-based interview simulation  
-- 🤖 AI answer evaluation with scoring system  
-- 📊 Advanced performance analytics dashboard  
-- 📈 Difficulty-based interview levels  
-- ☁️ Cloud deployment (AWS / GCP)  
-- 📱 Mobile-first optimization  
-
----
-
-## 💡 Key Highlights
-
-- Built a full-stack AI application using MERN stack  
-- Integrated Generative AI APIs (Gemini/OpenAI) for real-time insights  
-- Implemented resume analysis and skill gap detection system  
-- Designed a scalable and user-friendly architecture  
+- **Ownership Enforcement**: Every report, resume, mock interview session, and PDF download endpoint verifies `user === req.user.id`. Users cannot access private data by guessing IDs.
+- **Hardened Cookies**: JWT tokens are issued with `httpOnly: true`, `sameSite: "lax"`, and `secure` in production.
+- **Fail-Safe AI Layer**: The Groq service uses strict Zod schema parsing, retry mechanisms for transient errors, and robust fallbacks so that API rate limits or malformed responses never crash the Express server.
+- **Database Optimization**: Indexed queries for `user`, `createdAt`, and TTL index on token blacklists.
 
 ---
 
 ## 👨‍💻 Author
 
-Pranjul Katiyar  
-GitHub: https://github.com/pranjul075  
-LinkedIn: https://linkedin.com/in/pranjulkatiyar  
-
----
-
-## ⭐ Support
-
-If you found this project helpful, consider giving it a star ⭐ on GitHub.
+**Pranjul Katiyar**  
+- GitHub: [pranjul075](https://github.com/pranjul075)  
+- LinkedIn: [pranjulkatiyar](https://linkedin.com/in/pranjulkatiyar)
