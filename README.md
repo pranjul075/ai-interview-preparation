@@ -1,66 +1,94 @@
 <div align="center">
 
-#  PrepAI
-### AI-Powered Interview Preparation Platform
+<img src="https://img.shields.io/badge/⚡-PrepAI-6C5CE7?style=for-the-badge&labelColor=1a1a2e" height="60" alt="PrepAI"/>
 
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-Express%205-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose%209-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Groq](https://img.shields.io/badge/AI-Groq%20Llama%203.3%2070B-F55036)](https://groq.com/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](#-license)
+# PrepAI
+### 🎙️ AI-Powered Interview Preparation & Mock Interview Platform
+
+**Analyze your resume → Close your skill gaps → Practice with a real AI interviewer → Track your growth**
+
+<p>
+<img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React"/>
+<img src="https://img.shields.io/badge/Node.js-Express%205-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js"/>
+<img src="https://img.shields.io/badge/MongoDB-Mongoose%209-47A248?style=flat-square&logo=mongodb&logoColor=white" alt="MongoDB"/>
+<img src="https://img.shields.io/badge/AI-Groq%20Llama%203.3%2070B-F55036?style=flat-square&logo=meta&logoColor=white" alt="Groq"/>
+<img src="https://img.shields.io/badge/Auth-JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white" alt="JWT"/>
+<img src="https://img.shields.io/badge/PDF-Puppeteer-40B5A4?style=flat-square&logo=puppeteer&logoColor=white" alt="Puppeteer"/>
+<img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License"/>
+</p>
 
 *From resume gap analysis to timed AI mock interviews with 6‑dimension scoring and downloadable PDF reports.*
 
+<sub> · React 19 + Express 5 + MongoDB + Groq (Llama 3.3 70B)</sub>
+
 </div>
 
+<br/>
+
+<table align="center">
+<tr>
+<td align="center">📄<br/><b>Resume Analysis</b><br/><sub>Match score & skill gaps</sub></td>
+<td align="center">💬<br/><b>AI Mentor</b><br/><sub>Context-aware doubt solving</sub></td>
+<td align="center">🎯<br/><b>Mock Interviews</b><br/><sub>Timed, adaptive, realistic</sub></td>
+<td align="center">📊<br/><b>PDF Reports</b><br/><sub>6-dimension evaluation</sub></td>
+<td align="center">📈<br/><b>Growth Tracking</b><br/><sub>Session history & trends</sub></td>
+</tr>
+</table>
+
+<br/>
+
 ---
 
-##  Table of Contents
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [System Architecture](#️-system-architecture)
-- [Mock Interview Flow](#-mock-interview-session-flow)
-- [Data Model](#-data-model)
-- [Tech Stack](#-tech-stack)
-- [Getting Started](#-getting-started)
-- [Environment Configuration](#️-environment-configuration)
-- [Security Highlights](#-security--architecture-highlights)
-- [Author](#-author)
 
----
+## 🧭 Overview
 
-##  Overview
+**PrepAI** is a production-grade AI interview preparation platform that guides a candidate through the full prep lifecycle — turning "I don't know what to study" into a measurable, day-by-day path to being interview-ready.
 
-**PrepAI** is a production-grade AI interview preparation platform that guides a candidate through the full prep lifecycle:
+```mermaid
+flowchart LR
+    A["📄 Analyze<br/>Resume + JD"] --> B["🧭 Roadmap<br/>Skill gaps → plan"]
+    B --> C["💬 Learn<br/>AI mentor"]
+    C --> D["🎯 Practice<br/>Timed mock interview"]
+    D --> E["📊 Improve<br/>Scored PDF report"]
+    E -. "track over time" .-> B
 
-1. **Analyze** — upload a resume + target job description to surface skill gaps and a match score.
-2. **Learn** — clear doubts with a context-aware AI mentor grounded in that specific report.
-3. **Practice** — take a real-time, time-boxed AI mock interview with adaptive follow-ups.
-4. **Improve** — receive a 6-dimension evaluation, a downloadable PDF report, and track growth over time.
+    style A fill:#6C5CE7,color:#fff,stroke:none
+    style B fill:#00B894,color:#fff,stroke:none
+    style C fill:#0984E3,color:#fff,stroke:none
+    style D fill:#E17055,color:#fff,stroke:none
+    style E fill:#F5A623,color:#fff,stroke:none
+```
+
+| Stage | What happens |
+|---|---|
+| **1. Analyze** | Upload a resume + target job description to surface skill gaps and a match score. |
+| **2. Learn** | Clear doubts with a context-aware AI mentor grounded in that specific report. |
+| **3. Practice** | Take a real-time, time-boxed AI mock interview with adaptive follow-ups. |
+| **4. Improve** | Get a 6-dimension evaluation, a downloadable PDF report, and track growth over time. |
 
 ---
 
 ##  Key Features
 
-###  1. Resume & Job Description Analysis
+### 1. Resume & Job Description Analysis
 - **PDF Resume Upload & Text Extraction** — parses resumes (up to 5MB PDF) and extracts skills, projects, and domain experience.
 - **Match Score & Skill Gap Detection** — calculates a 0–100% match score and tags missing competencies by severity (`low`, `medium`, `high`).
 - **Dynamic Question Generation** — generates targeted technical + behavioral questions with interviewer intent and model answers.
 - **Personalized Preparation Roadmap** — a structured, day-by-day plan focused on closing detected gaps.
 
-###  2. PrepAI Assistant (AI Doubt Solver)
+### 2. PrepAI Assistant (AI Doubt Solver)
 - **Context-Aware Mentorship** — grounded in the candidate's active report (job description, match score, gaps, questions).
 - **Interactive Technical Coaching** — explains system design trade-offs and gives coding / STAR-method examples.
 - **Strict Domain Focus** — stays scoped to technical mastery, HR strategy, and prep rather than acting as a generic chatbot.
 
-###  3. Full AI Mock Interview Agent
+### 3. Full AI Mock Interview Agent
 - **Flexible Configuration** — 10 / 20 / 30-minute sessions across Technical, HR-Behavioral, Mixed, or Job-specific tracks, at Easy / Medium / Hard / Adaptive difficulty.
 - **Realistic Interviewer Simulation** — introduces the session, sets expectations, and asks one question at a time.
 - **Adaptive Follow-Up Questioning** — probes incomplete answers or transitions topics naturally, without disruptive mid-session score cards.
 - **Synchronized Dual-Timer System** — client-side countdown backed by strict server-side timestamp validation (`startedAt`, `expiresAt`, `completedAt`).
 
-###  4. Post-Interview Evaluation & PDF Reports
+### 4. Post-Interview Evaluation & PDF Reports
 Evaluates the full transcript across **6 core dimensions** (0–100):
 
 | Dimension | What it measures |
@@ -77,7 +105,7 @@ Evaluates the full transcript across **6 core dimensions** (0–100):
 - **Downloadable PDF Reports** — branded reports via headless Puppeteer.
 - **ATS Resume Generation** — clean, ATS-optimized resumes as PDFs.
 
-### 📈 5. Interview History & Performance Comparison
+###  5. Interview History & Performance Comparison
 - **Session Tracking** — every mock interview and resume analysis lives on a unified dashboard.
 - **Growth Trends** — automatically computed performance trends across attempts.
 
@@ -145,7 +173,7 @@ flowchart TB
 
 ---
 
-## 🎯 Mock Interview Session Flow
+## Mock Interview Session Flow
 
 ```mermaid
 sequenceDiagram
@@ -237,7 +265,7 @@ erDiagram
 
 ---
 
-## 🧠 Tech Stack
+## Tech Stack
 
 | Layer | Technologies |
 |---|---|
@@ -302,7 +330,7 @@ VITE_API_URL=http://localhost:3000
 
 ---
 
-## 🔐 Security & Architecture Highlights
+## Security & Architecture Highlights
 
 - **Ownership Enforcement** — every report, resume, mock interview session, and PDF download endpoint verifies `user === req.user.id`. Users cannot access private data by guessing IDs.
 - **Hardened Cookies** — JWT tokens issued with `httpOnly: true`, `sameSite: "lax"`, and `secure` in production.
