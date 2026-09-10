@@ -1,78 +1,279 @@
-# ⚡ PrepAI — AI-Powered Interview Preparation Platform
+<div align="center">
 
-PrepAI is a production-grade AI-powered interview preparation and simulated mock interview platform. It guides candidates through the complete journey: from analyzing their resume against a target job description to uncover skill gaps and build a personalized roadmap, to clearing doubts with a context-aware AI mentor, and finally practicing in real-time, time-aware AI mock interviews with comprehensive multi-dimensional evaluations and downloadable PDF reports.
+#  PrepAI
+### AI-Powered Interview Preparation Platform
+
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-Express%205-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose%209-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Groq](https://img.shields.io/badge/AI-Groq%20Llama%203.3%2070B-F55036)](https://groq.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](#-license)
+
+*From resume gap analysis to timed AI mock interviews with 6‑dimension scoring and downloadable PDF reports.*
+
+</div>
 
 ---
 
-## 🚀 Key Features
+##  Table of Contents
 
-### 📄 1. Resume & Job Description Analysis
-- **PDF Resume Upload & Text Extraction**: Parses resumes (up to 5MB PDF) and extracts key skills, projects, and domain experience.
-- **Match Score & Skill Gap Detection**: Calculates candidate-to-job match percentage (0–100%) and highlights missing competencies tagged by severity (`low`, `medium`, `high`).
-- **Dynamic Question Generation**: Generates targeted technical and behavioral interview questions with the interviewer's intention and model answers.
-- **Personalized Preparation Roadmap**: Generates a structured, day-by-day preparation schedule focused on eliminating detected skill gaps.
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [System Architecture](#️-system-architecture)
+- [Mock Interview Flow](#-mock-interview-session-flow)
+- [Data Model](#-data-model)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Environment Configuration](#️-environment-configuration)
+- [Security Highlights](#-security--architecture-highlights)
+- [Author](#-author)
 
-### 💬 2. PrepAI Assistant (AI Doubt Solver)
-- **Context-Aware Mentorship**: Grounded in the candidate's active interview report context (target job description, match score, detected skill gaps, and generated questions).
-- **Interactive Technical Coaching**: Solves conceptual doubts, explains system design trade-offs, and provides concrete coding or STAR-method examples.
-- **Strict Domain Focus**: Dedicated to technical mastery, HR strategy, and candidate preparation rather than behaving like a generic chatbot.
+---
 
-### 🎯 3. Full AI Mock Interview Agent
-- **Flexible Configuration**: Choose 10, 20, or 30-minute sessions across Technical, HR / Behavioral, Mixed, or Job-specific interview tracks with Easy, Medium, Hard, or Adaptive difficulty.
-- **Realistic Interviewer Simulation**: Introduces the session, sets expectations, asks one question at a time, and actively listens to candidate answers.
-- **Adaptive Follow-Up Questioning**: Acknowledges candidate responses and dynamically probes deeper into incomplete answers or transitions naturally across core topics without disrupting the candidate with mid-session score cards.
-- **Synchronized Dual-Timer System**: Client-side countdown timer synchronized with strict server-side timestamp validation (`startedAt`, `expiresAt`, `completedAt`).
+##  Overview
 
-### 📊 4. Comprehensive Post-Interview Evaluation & PDF Reports
-- **Holistic Session Assessment**: When the interview concludes or time expires, the AI evaluates the complete transcript across 6 core dimensions (0–100):
-  - **Technical Knowledge**
-  - **Problem Solving & Critical Thinking**
-  - **Communication Clarity**
-  - **Answer Relevance**
-  - **Depth & Architectural Trade-offs**
-  - **Project & Practical Experience**
-- **Actionable Feedback**: Delivers an executive assessment, demonstrated strengths, specific weaknesses, topics requiring reinforcement, and actionable preparation steps.
-- **Interview Readiness Rating**: Clear classification (`Needs Significant Improvement`, `Developing`, `Almost Ready`, `Interview Ready`).
-- **Downloadable PDF Reports**: Professional evaluation reports exported via headless Puppeteer with PrepAI branding.
-- **ATS Resume Generation**: Generates clean, ATS-optimized resumes downloadable as PDFs.
+**PrepAI** is a production-grade AI interview preparation platform that guides a candidate through the full prep lifecycle:
+
+1. **Analyze** — upload a resume + target job description to surface skill gaps and a match score.
+2. **Learn** — clear doubts with a context-aware AI mentor grounded in that specific report.
+3. **Practice** — take a real-time, time-boxed AI mock interview with adaptive follow-ups.
+4. **Improve** — receive a 6-dimension evaluation, a downloadable PDF report, and track growth over time.
+
+---
+
+##  Key Features
+
+###  1. Resume & Job Description Analysis
+- **PDF Resume Upload & Text Extraction** — parses resumes (up to 5MB PDF) and extracts skills, projects, and domain experience.
+- **Match Score & Skill Gap Detection** — calculates a 0–100% match score and tags missing competencies by severity (`low`, `medium`, `high`).
+- **Dynamic Question Generation** — generates targeted technical + behavioral questions with interviewer intent and model answers.
+- **Personalized Preparation Roadmap** — a structured, day-by-day plan focused on closing detected gaps.
+
+###  2. PrepAI Assistant (AI Doubt Solver)
+- **Context-Aware Mentorship** — grounded in the candidate's active report (job description, match score, gaps, questions).
+- **Interactive Technical Coaching** — explains system design trade-offs and gives coding / STAR-method examples.
+- **Strict Domain Focus** — stays scoped to technical mastery, HR strategy, and prep rather than acting as a generic chatbot.
+
+###  3. Full AI Mock Interview Agent
+- **Flexible Configuration** — 10 / 20 / 30-minute sessions across Technical, HR-Behavioral, Mixed, or Job-specific tracks, at Easy / Medium / Hard / Adaptive difficulty.
+- **Realistic Interviewer Simulation** — introduces the session, sets expectations, and asks one question at a time.
+- **Adaptive Follow-Up Questioning** — probes incomplete answers or transitions topics naturally, without disruptive mid-session score cards.
+- **Synchronized Dual-Timer System** — client-side countdown backed by strict server-side timestamp validation (`startedAt`, `expiresAt`, `completedAt`).
+
+###  4. Post-Interview Evaluation & PDF Reports
+Evaluates the full transcript across **6 core dimensions** (0–100):
+
+| Dimension | What it measures |
+|---|---|
+| Technical Knowledge | Depth and accuracy of technical answers |
+| Problem Solving & Critical Thinking | Approach to unfamiliar or hard questions |
+| Communication Clarity | Structure and clarity of explanations |
+| Answer Relevance | How directly answers address what was asked |
+| Depth & Architectural Trade-offs | System-design maturity |
+| Project & Practical Experience | Real-world grounding of examples |
+
+- **Actionable Feedback** — executive assessment, strengths, weaknesses, reinforcement topics, next steps.
+- **Interview Readiness Rating** — `Needs Significant Improvement` → `Developing` → `Almost Ready` → `Interview Ready`.
+- **Downloadable PDF Reports** — branded reports via headless Puppeteer.
+- **ATS Resume Generation** — clean, ATS-optimized resumes as PDFs.
 
 ### 📈 5. Interview History & Performance Comparison
-- **Session Tracking**: Track previous mock interviews and resume analyses on the unified dashboard.
-- **Growth Trends**: Automatically computes and visualizes verified performance improvement across mock interview attempts.
-
----
-
-## 🧠 Tech Stack
-
-- **Frontend**: React 19, Vite, React Router 7, SCSS, Axios
-- **Backend**: Node.js, Express 5, MongoDB, Mongoose 9, JWT Authentication, bcryptjs, Multer, Puppeteer, Zod
-- **AI Engine**: Groq Cloud API (`groq-sdk`, `llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
+- **Session Tracking** — every mock interview and resume analysis lives on a unified dashboard.
+- **Growth Trends** — automatically computed performance trends across attempts.
 
 ---
 
 ## 🏗️ System Architecture
 
-```
-Candidate (Browser)
-       │
-       ▼
-React 19 Frontend (Vite + SCSS)
-       │ (REST APIs + HttpOnly Cookies)
-       ▼
-Node.js & Express Backend
-       ├── Auth Middleware (JWT + Token Blacklist)
-       ├── File Middleware (Multer, 5MB PDF Filter)
-       ├── Mock Interview Controller (Dual-Timer, Session Lifecycle)
-       ├── AI Service Layer (Groq SDK + Zod Validation + Resilience)
-       └── Report Engine (Puppeteer Headless PDF Generator)
-       │
-       ├── MongoDB (Users, InterviewReports, MockInterviews, BlacklistedTokens)
-       └── Groq Cloud (Llama 3.3 70B Versatile for high-speed inference)
+```mermaid
+flowchart TB
+    subgraph Client["🖥️ Client Layer"]
+        UI["React 19 + Vite SPA<br/>SCSS · React Router 7 · Axios"]
+    end
+
+    subgraph Edge["🔐 Edge / Auth"]
+        JWT["JWT Auth Middleware<br/>HttpOnly Cookies · Token Blacklist"]
+    end
+
+    subgraph API["⚙️ Node.js / Express 5 Backend"]
+        Router["REST API Router"]
+        FileMW["File Middleware<br/>Multer · 5MB PDF Filter"]
+        ResumeCtrl["Resume & JD<br/>Analysis Controller"]
+        MentorCtrl["PrepAI Assistant<br/>Controller"]
+        MockCtrl["Mock Interview Controller<br/>Dual-Timer · Session Lifecycle"]
+        ReportCtrl["Evaluation & Report<br/>Controller"]
+        AIService["AI Service Layer<br/>Groq SDK · Zod Validation · Retry/Fallback"]
+        PDFEngine["Report Engine<br/>Puppeteer Headless PDF"]
+    end
+
+    subgraph Data["🗄️ Data Layer"]
+        Mongo[("MongoDB Atlas<br/>Users · InterviewReports<br/>MockInterviews · BlacklistedTokens")]
+    end
+
+    subgraph External["☁️ External Services"]
+        Groq["Groq Cloud API<br/>Llama 3.3 70B Versatile /<br/>Llama 3.1 8B Instant"]
+    end
+
+    UI -- "REST calls + HttpOnly cookies" --> JWT
+    JWT --> Router
+    Router --> FileMW
+    FileMW --> ResumeCtrl
+    Router --> MentorCtrl
+    Router --> MockCtrl
+    Router --> ReportCtrl
+
+    ResumeCtrl --> AIService
+    MentorCtrl --> AIService
+    MockCtrl --> AIService
+    ReportCtrl --> AIService
+    ReportCtrl --> PDFEngine
+
+    AIService <--> Groq
+    ResumeCtrl <--> Mongo
+    MentorCtrl <--> Mongo
+    MockCtrl <--> Mongo
+    ReportCtrl <--> Mongo
+
+    PDFEngine -- "PDF stream" --> UI
+
+    style Client fill:#1a1a2e,stroke:#61DAFB,color:#fff
+    style Edge fill:#1a1a2e,stroke:#f5a623,color:#fff
+    style API fill:#1a1a2e,stroke:#339933,color:#fff
+    style Data fill:#1a1a2e,stroke:#47A248,color:#fff
+    style External fill:#1a1a2e,stroke:#F55036,color:#fff
 ```
 
 ---
 
-## ⚙️ Environment Configuration
+## 🎯 Mock Interview Session Flow
+
+```mermaid
+sequenceDiagram
+    actor Candidate
+    participant FE as React Frontend
+    participant BE as Express Backend
+    participant Timer as Dual-Timer System
+    participant AI as Groq AI Engine
+    participant DB as MongoDB
+
+    Candidate->>FE: Configure session (duration, track, difficulty)
+    FE->>BE: POST /mock-interview/start
+    BE->>DB: Create session (startedAt, expiresAt)
+    BE->>Timer: Initialize server-side timer
+    BE->>AI: Generate opening question
+    AI-->>BE: Question #1
+    BE-->>FE: Session started + Question #1
+    FE-->>Candidate: Show question + running countdown
+
+    loop Until time expires or interview ends
+        Candidate->>FE: Submit answer
+        FE->>BE: POST /mock-interview/answer
+        BE->>Timer: Validate against expiresAt
+        BE->>AI: Evaluate answer + decide follow-up/topic switch
+        AI-->>BE: Next question or probe
+        BE->>DB: Persist transcript turn
+        BE-->>FE: Next question
+        FE-->>Candidate: Show next question
+    end
+
+    FE->>BE: POST /mock-interview/complete (or timer expiry)
+    BE->>AI: Evaluate full transcript (6 dimensions)
+    AI-->>BE: Scores + strengths + weaknesses + readiness rating
+    BE->>DB: Save InterviewReport
+    BE->>BE: Generate PDF via Puppeteer
+    BE-->>FE: Evaluation summary + PDF download link
+    FE-->>Candidate: Show results dashboard
+```
+
+---
+
+## 🗃️ Data Model
+
+```mermaid
+erDiagram
+    USER ||--o{ INTERVIEW_REPORT : owns
+    USER ||--o{ MOCK_INTERVIEW : owns
+    USER ||--o{ BLACKLISTED_TOKEN : invalidates
+    INTERVIEW_REPORT ||--o{ MOCK_INTERVIEW : "informs context for"
+
+    USER {
+        ObjectId id PK
+        string name
+        string email
+        string passwordHash
+        date createdAt
+    }
+    INTERVIEW_REPORT {
+        ObjectId id PK
+        ObjectId user FK
+        string jobDescription
+        int matchScore
+        array skillGaps
+        array generatedQuestions
+        array roadmap
+        date createdAt
+    }
+    MOCK_INTERVIEW {
+        ObjectId id PK
+        ObjectId user FK
+        ObjectId reportRef FK
+        string track
+        string difficulty
+        int durationMinutes
+        date startedAt
+        date expiresAt
+        date completedAt
+        array transcript
+        object evaluation
+        string readinessRating
+    }
+    BLACKLISTED_TOKEN {
+        ObjectId id PK
+        ObjectId user FK
+        string token
+        date expiresAt
+    }
+```
+
+---
+
+## 🧠 Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, Vite, React Router 7, SCSS, Axios |
+| **Backend** | Node.js, Express 5, MongoDB, Mongoose 9, JWT Auth, bcryptjs, Multer, Puppeteer, Zod |
+| **AI Engine** | Groq Cloud API (`groq-sdk`) — `llama-3.3-70b-versatile` / `llama-3.1-8b-instant` |
+
+---
+
+##  Getting Started
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/pranjul075/ai-interview-preparation.git
+cd ai-interview-preparation
+```
+
+### 2. Setup and run Backend
+```bash
+cd Backend
+npm install
+npm run dev
+```
+The server starts on `http://localhost:3000`.
+
+### 3. Setup and run Frontend
+```bash
+cd ../Frontend
+npm install
+npm run dev
+```
+The client starts on `http://localhost:5173`.
+
+---
+
+## Environment Configuration
 
 Create a `.env` file in the `Backend` directory (see `.env.example`):
 
@@ -101,43 +302,11 @@ VITE_API_URL=http://localhost:3000
 
 ---
 
-## 🚀 Getting Started
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/pranjul075/ai-interview-preparation.git
-cd ai-interview-preparation
-```
-
-### 2. Setup and run Backend
-```bash
-cd Backend
-npm install
-npm run dev
-```
-The server will start on `http://localhost:3000`.
-
-### 3. Setup and run Frontend
-```bash
-cd ../Frontend
-npm install
-npm run dev
-```
-The client will start on `http://localhost:5173`.
-
----
-
 ## 🔐 Security & Architecture Highlights
 
-- **Ownership Enforcement**: Every report, resume, mock interview session, and PDF download endpoint verifies `user === req.user.id`. Users cannot access private data by guessing IDs.
-- **Hardened Cookies**: JWT tokens are issued with `httpOnly: true`, `sameSite: "lax"`, and `secure` in production.
-- **Fail-Safe AI Layer**: The Groq service uses strict Zod schema parsing, retry mechanisms for transient errors, and robust fallbacks so that API rate limits or malformed responses never crash the Express server.
-- **Database Optimization**: Indexed queries for `user`, `createdAt`, and TTL index on token blacklists.
+- **Ownership Enforcement** — every report, resume, mock interview session, and PDF download endpoint verifies `user === req.user.id`. Users cannot access private data by guessing IDs.
+- **Hardened Cookies** — JWT tokens issued with `httpOnly: true`, `sameSite: "lax"`, and `secure` in production.
+- **Fail-Safe AI Layer** — the Groq service uses strict Zod schema parsing, retry mechanisms for transient errors, and robust fallbacks so API rate limits or malformed responses never crash the Express server.
+- **Database Optimization** — indexed queries on `user`, `createdAt`, plus a TTL index on token blacklists.
 
 ---
-
-## 👨‍💻 Author
-
-**Pranjul Katiyar**  
-- GitHub: [pranjul075](https://github.com/pranjul075)  
-- LinkedIn: [pranjulkatiyar](https://linkedin.com/in/pranjulkatiyar)
