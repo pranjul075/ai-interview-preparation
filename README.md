@@ -3,7 +3,7 @@
 <img src="https://img.shields.io/badge/⚡-PrepAI-6C5CE7?style=for-the-badge&labelColor=1a1a2e" height="60" alt="PrepAI"/>
 
 # PrepAI
-### 🎙️ AI-Powered Interview Preparation Platform
+###  AI-Powered Interview Preparation Platform
 
 **Analyze your resume → Close your skill gaps → Practice with a real AI interviewer → Track your growth**
 
