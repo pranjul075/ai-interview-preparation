@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
+  /* Colors matching Stitch aesthetic */
   --color-surface: #f8f9ff;
   --color-surface-container: #e5eeff;
   --color-surface-container-high: #dce9ff;
@@ -10,15 +10,19 @@
   --color-surface-variant: #d3e4fe;
   --color-surface-dim: #cbdbf5;
   --color-surface-bright: #f8f9ff;
-  --color-surface-tint: #4f46e5;
   --color-background: #f8f9ff;
   --color-on-surface: #0f172a;
-  --color-on-surface-variant: #64748b;
+  --color-on-surface-variant: #475569;
   --color-on-background: #0f172a;
-  --color-primary: #4f46e5;
-  --color-primary-container: #4338ca;
+
+  /* Signature Hot Pink / Rose Branding */
+  --color-primary: #ff2e63;
+  --color-primary-container: #ff3366;
+  --color-brand-pink: #ff2e63;
+  --color-brand-rose: #f43f5e;
   --color-on-primary: #ffffff;
   --color-on-primary-container: #ffffff;
+
   --color-secondary: #059669;
   --color-secondary-container: #39b8fd;
   --color-on-secondary: #ffffff;
@@ -39,8 +43,8 @@
   --color-canvas-base: #f8fafc;
   --color-canvas-subtle: #f1f5f9;
   --color-border-strong: rgba(203, 213, 225, 0.9);
-  --color-border-subtle: rgba(226, 232, 240, 0.8);
-  --color-border-hairline: rgba(226, 232, 240, 0.6);
+  --color-border-subtle: rgba(0, 0, 0, 0.08);
+  --color-border-hairline: rgba(0, 0, 0, 0.06);
   --color-semantic-error: #dc2626;
   --color-semantic-info: #0284c7;
   --color-semantic-success: #059669;
@@ -66,4 +70,211 @@
   --font-headline: "Plus Jakarta Sans", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-code: "JetBrains Mono", monospace;
+}
+
+/* Radiant Translucent Light Dashboard Canvas Card Aesthetic */
+.dashboard-card,
+.glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 25px -4px rgba(99, 102, 241, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-card:hover,
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(255, 46, 99, 0.35);
+  box-shadow: 0 16px 36px -6px rgba(255, 46, 99, 0.12), 0 4px 16px -2px rgba(99, 102, 241, 0.08);
+}
+
+.glass-card-interactive {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-interactive:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(255, 46, 99, 0.35);
+  box-shadow: 0 24px 48px -12px rgba(225, 29, 72, 0.16), 0 12px 24px -4px rgba(15, 23, 42, 0.06);
+}
+
+.glass-inner-subtle {
+  background: rgba(248, 250, 255, 0.75);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.02);
+}
+
+/* Hot Pink / Crimson Kinetic Shimmer Gradient */
+@keyframes fluid-gradient-pink {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes specular-sheen {
+  0% { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  20% { opacity: 0.8; }
+  50% { opacity: 0.95; }
+  80% { opacity: 0.8; }
+  100% { transform: translateX(250%) skewX(-20deg); opacity: 0; }
+}
+
+@keyframes pink-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    box-shadow: 0 0 10px 2px rgba(255, 46, 99, 0.3);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 18px 4px rgba(255, 46, 99, 0.55);
+  }
+}
+
+.kinetic-pink-gradient {
+  background: linear-gradient(
+    105deg,
+    #e11d48 0%,
+    #ff2e63 25%,
+    #f43f5e 50%,
+    #fb7185 75%,
+    #e11d48 100%
+  );
+  background-size: 240% 240%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  animation: fluid-gradient-pink 6s ease-in-out infinite;
+  filter: drop-shadow(0 2px 14px rgba(255, 46, 99, 0.25));
+}
+
+.kinetic-hero-sheen {
+  position: relative;
+  display: inline-block;
+}
+
+.kinetic-hero-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 100%
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  animation: specular-sheen 6s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.2s;
+}
+
+/* Tagline Pill in Modern Light Frosted Glass Scheme */
+.kinetic-tagline-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.9rem 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 46, 99, 0.25);
+  box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kinetic-tagline-pill:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 46, 99, 0.5);
+  box-shadow: 0 8px 20px -3px rgba(255, 46, 99, 0.2);
+}
+
+.tagline-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #1e293b 0%,
+    #334155 30%,
+    #e11d48 65%,
+    #0f172a 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fluid-gradient-pink 5s ease-in-out infinite;
+  font-weight: 600;
+}
+
+.pink-breathing-dot {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #ff2e63;
+  box-shadow: 0 0 8px rgba(255, 46, 99, 0.8);
+}
+
+.pink-breathing-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 46, 99, 0.6) 0%, transparent 70%);
+  animation: pink-pulse 2.4s ease-in-out infinite;
+}
+
+/* Light Radiant Frosted Glass Lens / Liquid Spheres */
+.visionos-pink-lens {
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.88) 0%, rgba(255, 225, 235, 0.45) 45%, rgba(235, 240, 255, 0.5) 75%, rgba(255, 46, 99, 0.16) 100%);
+  box-shadow:
+    inset 0 4px 12px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 14px rgba(255, 46, 99, 0.15),
+    0 18px 36px -10px rgba(99, 102, 241, 0.15),
+    0 6px 18px rgba(255, 46, 99, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
+@keyframes float-subtle-1 {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(6px, -14px, 0); }
+}
+
+@keyframes float-subtle-2 {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-8px, 12px, 0); }
+}
+
+.float-lens-1 { animation: float-subtle-1 10s ease-in-out infinite; }
+.float-lens-2 { animation: float-subtle-2 13s ease-in-out infinite; }
+
+/* Selection Cards for Mock Setup */
+.selection-card-idle {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.selection-card-idle:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 46, 99, 0.35);
+  box-shadow: 0 8px 20px -4px rgba(255, 46, 99, 0.1), 0 2px 6px rgba(15, 23, 42, 0.04);
+  transform: translateY(-1px);
+}
+.selection-card-active {
+  background: linear-gradient(180deg, rgba(255, 46, 99, 0.06) 0%, rgba(255, 255, 255, 0.96) 100%) !important;
+  border: 1.5px solid #ff2e63 !important;
+  box-shadow: 0 0 20px -2px rgba(255, 46, 99, 0.25), 0 8px 18px -4px rgba(255, 46, 99, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 1) !important;
 }

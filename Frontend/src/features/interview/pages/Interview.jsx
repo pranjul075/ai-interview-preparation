@@ -1,206 +1,392 @@
-import React, { useState, useEffect } from 'react'
-import '../style/interview.scss'
-import { useInterview } from '../hooks/useInterview.js'
-import { useNavigate, useParams } from 'react-router'
+import React, { useState, useEffect } from "react"
+import { useNavigate, useParams, Link } from "react-router"
+import { useInterview } from "../hooks/useInterview"
 
-
-
-const NAV_ITEMS = [
-    { id: 'technical', label: 'Technical Questions', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>) },
-    { id: 'behavioral', label: 'Behavioral Questions', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>) },
-    { id: 'roadmap', label: 'Road Map', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></svg>) },
-]
-
-// ── Sub-components ────────────────────────────────────────────────────────────
-const QuestionCard = ({ item, index }) => {
-    const [ open, setOpen ] = useState(false)
-    return (
-        <div className='q-card'>
-            <div className='q-card__header' onClick={() => setOpen(o => !o)}>
-                <span className='q-card__index'>Q{index + 1}</span>
-                <p className='q-card__question'>{item.question}</p>
-                <span className={`q-card__chevron ${open ? 'q-card__chevron--open' : ''}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
-                </span>
-            </div>
-            {open && (
-                <div className='q-card__body'>
-                    <div className='q-card__section'>
-                        <span className='q-card__tag q-card__tag--intention'>Intention</span>
-                        <p>{item.intention}</p>
-                    </div>
-                    <div className='q-card__section'>
-                        <span className='q-card__tag q-card__tag--answer'>Model Answer</span>
-                        <p>{item.answer}</p>
-                    </div>
-                </div>
-            )}
-        </div>
-    )
-}
-
-const RoadMapDay = ({ day }) => (
-    <div className='roadmap-day'>
-        <div className='roadmap-day__header'>
-            <span className='roadmap-day__badge'>Day {day.day}</span>
-            <h3 className='roadmap-day__focus'>{day.focus}</h3>
-        </div>
-        <ul className='roadmap-day__tasks'>
-            {day.tasks.map((task, i) => (
-                <li key={i}>
-                    <span className='roadmap-day__bullet' />
-                    {task}
-                </li>
-            ))}
-        </ul>
-    </div>
-)
-
-// ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
-    const [ activeNav, setActiveNav ] = useState('technical')
-    const { report, getReportById, loading, getResumePdf } = useInterview()
     const { interviewId } = useParams()
+    const { report, getReportById, loading, getResumePdf } = useInterview()
+    const navigate = useNavigate()
+
+    const [activeTab, setActiveTab] = useState("technical")
+    const [checkedTasks, setCheckedTasks] = useState({})
 
     useEffect(() => {
         if (interviewId) {
             getReportById(interviewId)
         }
-    }, [ interviewId ])
-
-
+    }, [interviewId])
 
     if (loading || !report) {
         return (
-            <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
+            <main className="w-full flex-1 flex flex-col items-center justify-center py-20 px-4">
+                <span className="material-symbols-outlined text-4xl text-[#ff2e63] animate-spin mb-4">progress_activity</span>
+                <h1 className="text-xl font-bold text-slate-800 font-headline">Loading your interview strategy...</h1>
+                <p className="text-xs text-slate-500 mt-1">Retrieving AI diagnostic scorecard, skill gaps, and custom syllabus.</p>
             </main>
         )
     }
 
-    const scoreColor =
-        report.matchScore >= 80 ? 'score--high' :
-            report.matchScore >= 60 ? 'score--mid' : 'score--low'
+    const matchScore = report.matchScore || 0
+    const circumference = 2 * Math.PI * 66
+    const strokeDashoffset = circumference - (matchScore / 100) * circumference
 
+    const toggleTask = (taskId) => {
+        setCheckedTasks(prev => ({
+            ...prev,
+            [taskId]: !prev[taskId]
+        }))
+    }
+
+    const totalTasks = report.preparationPlan?.reduce((acc, d) => acc + (d.tasks?.length || 0), 0) || 0
+    const completedTasksCount = Object.values(checkedTasks).filter(Boolean).length
+    const taskPercent = totalTasks > 0 ? Math.round((completedTasksCount / totalTasks) * 100) : 0
 
     return (
-        <div className='interview-page'>
-            <div className='interview-layout'>
+        <main className="w-full flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-[1440px] mx-auto">
+            <div className="flex flex-col w-full gap-8">
 
-                {/* ── Left Nav ── */}
-                <nav className='interview-nav'>
-                    <div className="nav-content">
-                        <p className='interview-nav__label'>Sections</p>
-                        {NAV_ITEMS.map(item => (
-                            <button
-                                key={item.id}
-                                className={`interview-nav__item ${activeNav === item.id ? 'interview-nav__item--active' : ''}`}
-                                onClick={() => setActiveNav(item.id)}
+                {/* ── TOP HEADER & ACTIONS ── */}
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-2 font-code text-xs text-slate-500">
+                            <Link to="/" className="hover:text-slate-800 transition-colors">RESUME ANALYSIS</Link>
+                            <span>/</span>
+                            <span className="text-[#e11d48] font-semibold">MATCH REPORT</span>
+                            <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-bold">
+                                {matchScore >= 80 ? "STRONG MATCH" : matchScore >= 60 ? "MODERATE FIT" : "GAP REMEDIATION"}
+                            </span>
+                        </div>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-headline">
+                            {report.title || "Target Role Analysis Report"}
+                        </h1>
+                        <div className="flex items-center gap-3 text-xs text-slate-500 font-code flex-wrap">
+                            <span className="flex items-center gap-1 text-slate-700 font-medium">
+                                <span className="material-symbols-outlined text-sm text-[#ff2e63]">verified</span>
+                                Real Score: {matchScore}%
+                            </span>
+                            <span>•</span>
+                            <span>{new Date(report.createdAt).toLocaleDateString()}</span>
+                            <span>•</span>
+                            <span>{report.technicalQuestions?.length || 0} Technical Questions</span>
+                            <span>•</span>
+                            <span>{report.behavioralQuestions?.length || 0} Behavioral Questions</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 flex-wrap self-start lg:self-center">
+                        <button
+                            onClick={() => getResumePdf(interviewId)}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 font-semibold text-xs shadow-xs transition-all"
+                        >
+                            <span className="material-symbols-outlined text-base">download</span>
+                            <span>Export Resume (PDF)</span>
+                        </button>
+                        <Link
+                            to={`/mock-interview?reportId=${interviewId}`}
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ff2e63] to-[#e11d48] hover:from-[#ff416c] hover:to-[#f43f5e] text-white font-semibold text-xs shadow-md shadow-[#ff2e63]/25 hover:shadow-[#ff2e63]/40 border border-white/20 transition-all active:scale-[0.98]"
+                        >
+                            <span className="material-symbols-outlined text-base">timer</span>
+                            <span>Practice Mock Interview</span>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* ── SUMMARY SECTION: SCORE RING & INSIGHTS ── */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Score Ring Card */}
+                    <div className="lg:col-span-7 glass-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-sm">
+                        <div className="flex items-center justify-between mb-4 z-10">
+                            <span className="font-code text-xs text-slate-500 uppercase tracking-wider font-semibold">
+                                Profile Match Diagnostic
+                            </span>
+                            <span className="flex items-center gap-1.5 font-code text-xs text-slate-700 bg-white/90 border border-slate-200 px-3 py-1 rounded-full font-semibold shadow-2xs">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                                SCORE CALCULATED
+                            </span>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 my-auto z-10">
+                            {/* Circular SVG Ring */}
+                            <div className="relative flex-shrink-0 w-44 h-44 flex items-center justify-center">
+                                <svg className="w-44 h-44 -rotate-90" viewBox="0 0 160 160">
+                                    <circle
+                                        cx="80"
+                                        cy="80"
+                                        r="66"
+                                        fill="transparent"
+                                        stroke="#e2e8f0"
+                                        strokeWidth="12"
+                                    />
+                                    <circle
+                                        cx="80"
+                                        cy="80"
+                                        r="66"
+                                        fill="transparent"
+                                        stroke="#ff2e63"
+                                        strokeWidth="12"
+                                        strokeDasharray={circumference}
+                                        strokeDashoffset={strokeDashoffset}
+                                        strokeLinecap="round"
+                                        style={{ transition: "stroke-dashoffset 1s ease" }}
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                    <span className="font-headline text-3xl font-extrabold text-slate-900 tracking-tight">
+                                        {matchScore}%
+                                    </span>
+                                    <span className="font-code text-[10px] text-slate-400 uppercase -mt-0.5 font-semibold">
+                                        Overall Match
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2 text-center sm:text-left">
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-rose-50 border border-rose-200 text-[#e11d48] w-fit mx-auto sm:mx-0 shadow-2xs">
+                                    <span className="material-symbols-outlined text-sm">insights</span>
+                                    <span className="font-code text-xs font-semibold">
+                                        {matchScore >= 80 ? "High Compatibility" : matchScore >= 60 ? "Moderate Alignment" : "Skill Gap Focus Required"}
+                                    </span>
+                                </div>
+                                <p className="text-xs sm:text-sm text-slate-600 max-w-md leading-relaxed">
+                                    Calculated by comparing keywords, stack proficiencies, and experience depth against the parsed job requirements.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Sub Metrics Strip */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-4 border-t border-slate-200/70 z-10">
+                            <div className="p-3 rounded-xl bg-white/80 border border-slate-200/80 flex flex-col gap-1 shadow-xs">
+                                <span className="font-code text-[10px] text-slate-500 font-semibold uppercase">SKILL GAPS</span>
+                                <span className="font-code text-base text-slate-900 font-bold">{report.skillGaps?.length || 0} Areas</span>
+                            </div>
+                            <div className="p-3 rounded-xl bg-white/80 border border-slate-200/80 flex flex-col gap-1 shadow-xs">
+                                <span className="font-code text-[10px] text-slate-500 font-semibold uppercase">TECHNICAL DRILLS</span>
+                                <span className="font-code text-base text-slate-900 font-bold">{report.technicalQuestions?.length || 0} Questions</span>
+                            </div>
+                            <div className="p-3 rounded-xl bg-white/80 border border-slate-200/80 flex flex-col gap-1 shadow-xs">
+                                <span className="font-code text-[10px] text-slate-500 font-semibold uppercase">ROADMAP SYLLABUS</span>
+                                <span className="font-code text-base text-slate-900 font-bold">{report.preparationPlan?.length || 0} Days</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Skill Gaps Breakdown Card */}
+                    <div className="lg:col-span-5 glass-card rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-1.5 font-code text-xs text-slate-700 uppercase tracking-wider font-semibold">
+                                    <span className="material-symbols-outlined text-[#ff2e63] text-base">psychology</span>
+                                    <span>Detected Skill Gaps</span>
+                                </div>
+                                <span className="font-code text-xs text-slate-400 font-medium">Real-time Analysis</span>
+                            </div>
+
+                            {report.skillGaps && report.skillGaps.length > 0 ? (
+                                <div className="flex flex-col gap-2 max-h-[260px] overflow-y-auto pr-1">
+                                    {report.skillGaps.map((gap, i) => {
+                                        const sev = gap.severity?.toLowerCase()
+                                        const badgeClass =
+                                            sev === "high"
+                                                ? "bg-rose-50 border-rose-200 text-rose-700"
+                                                : sev === "medium"
+                                                ? "bg-amber-50 border-amber-200 text-amber-700"
+                                                : "bg-sky-50 border-sky-200 text-sky-700"
+                                        return (
+                                            <div
+                                                key={i}
+                                                className="p-3 rounded-xl bg-white/80 border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#ff2e63]" />
+                                                    <span className="text-xs sm:text-sm font-semibold text-slate-800">{gap.skill}</span>
+                                                </div>
+                                                <span className={`px-2 py-0.5 rounded-md border font-code text-[10px] uppercase font-bold ${badgeClass}`}>
+                                                    {gap.severity}
+                                                </span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="p-6 rounded-xl bg-white/80 border border-slate-200 text-center text-xs text-slate-500">
+                                    No critical skill gaps detected. Your profile aligns strongly with the role requirements!
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="pt-4 mt-4 border-t border-slate-200/70 flex items-center justify-between font-code text-xs">
+                            <span className="text-slate-400">Ready for tailored practice?</span>
+                            <Link
+                                to={`/mock-interview?reportId=${interviewId}`}
+                                className="text-[#e11d48] hover:text-[#ff2e63] font-semibold hover:underline"
                             >
-                                <span className='interview-nav__icon'>{item.icon}</span>
-                                {item.label}
+                                Start Mock Interview →
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── QUESTION DRILLS ACCORDIONS ── */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setActiveTab("technical")}
+                                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                                    activeTab === "technical"
+                                        ? "bg-[#ff2e63] text-white shadow-sm shadow-[#ff2e63]/25"
+                                        : "bg-white/80 text-slate-600 hover:text-slate-900 border border-slate-200"
+                                }`}
+                            >
+                                Technical Questions ({report.technicalQuestions?.length || 0})
                             </button>
+                            <button
+                                onClick={() => setActiveTab("behavioral")}
+                                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                                    activeTab === "behavioral"
+                                        ? "bg-[#ff2e63] text-white shadow-sm shadow-[#ff2e63]/25"
+                                        : "bg-white/80 text-slate-600 hover:text-slate-900 border border-slate-200"
+                                }`}
+                            >
+                                Behavioral Questions ({report.behavioralQuestions?.length || 0})
+                            </button>
+                        </div>
+
+                        <Link
+                            to="/assistant"
+                            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-600 hover:text-[#ff2e63] font-semibold"
+                        >
+                            <span className="material-symbols-outlined text-sm">smart_toy</span>
+                            <span>Discuss with Assistant</span>
+                        </Link>
+                    </div>
+
+                    {/* Questions List */}
+                    <div className="flex flex-col gap-3">
+                        {activeTab === "technical" ? (
+                            report.technicalQuestions?.map((q, idx) => (
+                                <details
+                                    key={idx}
+                                    className="group glass-card rounded-2xl p-4 sm:p-5 border border-white/95 transition-all cursor-pointer"
+                                >
+                                    <summary className="list-none flex items-start justify-between gap-3">
+                                        <div className="flex items-start gap-3">
+                                            <span className="px-2 py-0.5 rounded-md bg-[#ff2e63]/10 font-code text-xs font-bold text-[#e11d48]">
+                                                Q{idx + 1}
+                                            </span>
+                                            <p className="text-sm font-bold text-slate-900 font-headline">{q.question}</p>
+                                        </div>
+                                        <span className="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">
+                                            expand_more
+                                        </span>
+                                    </summary>
+                                    <div className="pt-4 mt-3 border-t border-slate-100 flex flex-col gap-3 text-xs sm:text-sm">
+                                        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+                                            <span className="font-code text-[11px] font-bold text-[#e11d48] uppercase">INTERVIEWER INTENTION</span>
+                                            <p className="text-slate-700 mt-1 leading-relaxed">{q.intention}</p>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-white border border-emerald-200">
+                                            <span className="font-code text-[11px] font-bold text-emerald-700 uppercase">MODEL ANSWER / TALKING POINTS</span>
+                                            <p className="text-slate-800 mt-1 leading-relaxed">{q.answer}</p>
+                                        </div>
+                                    </div>
+                                </details>
+                            ))
+                        ) : (
+                            report.behavioralQuestions?.map((q, idx) => (
+                                <details
+                                    key={idx}
+                                    className="group glass-card rounded-2xl p-4 sm:p-5 border border-white/95 transition-all cursor-pointer"
+                                >
+                                    <summary className="list-none flex items-start justify-between gap-3">
+                                        <div className="flex items-start gap-3">
+                                            <span className="px-2 py-0.5 rounded-md bg-indigo-50 font-code text-xs font-bold text-indigo-700">
+                                                Q{idx + 1}
+                                            </span>
+                                            <p className="text-sm font-bold text-slate-900 font-headline">{q.question}</p>
+                                        </div>
+                                        <span className="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">
+                                            expand_more
+                                        </span>
+                                    </summary>
+                                    <div className="pt-4 mt-3 border-t border-slate-100 flex flex-col gap-3 text-xs sm:text-sm">
+                                        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+                                            <span className="font-code text-[11px] font-bold text-indigo-700 uppercase">INTERVIEWER INTENTION</span>
+                                            <p className="text-slate-700 mt-1 leading-relaxed">{q.intention}</p>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-white border border-emerald-200">
+                                            <span className="font-code text-[11px] font-bold text-emerald-700 uppercase">STAR ANSWER FRAMEWORK</span>
+                                            <p className="text-slate-800 mt-1 leading-relaxed">{q.answer}</p>
+                                        </div>
+                                    </div>
+                                </details>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* ── TARGETED PREPARATION ROADMAP ── */}
+                <div className="flex flex-col gap-4 pt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 glass-card p-4 sm:p-5 rounded-2xl shadow-xs">
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-[#ff2e63] text-xl">route</span>
+                                <h2 className="text-lg font-bold text-slate-900 tracking-tight font-headline">
+                                    Targeted Preparation Roadmap
+                                </h2>
+                            </div>
+                            <p className="text-xs text-slate-500">
+                                Step-by-step curriculum configured by AI to resolve your detected skill gaps.
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="font-code text-xs font-bold text-slate-700">
+                                {completedTasksCount} of {totalTasks} tasks ({taskPercent}%)
+                            </span>
+                            <div className="w-28 bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200">
+                                <div className="bg-[#ff2e63] h-full rounded-full transition-all duration-300" style={{ width: `${taskPercent}%` }} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Days Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {report.preparationPlan?.map((plan) => (
+                            <div key={plan.day} className="glass-card rounded-2xl p-5 flex flex-col justify-between gap-4">
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="px-2.5 py-1 rounded-lg bg-[#ff2e63]/10 font-code text-xs font-bold text-[#e11d48]">
+                                            Day {plan.day}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-sm font-bold text-slate-900 font-headline leading-snug">
+                                        {plan.focus}
+                                    </h3>
+                                    <ul className="space-y-2 mt-1">
+                                        {plan.tasks?.map((task, tidx) => {
+                                            const taskId = `${plan.day}-${tidx}`
+                                            const isChecked = !!checkedTasks[taskId]
+                                            return (
+                                                <li key={tidx} className="flex items-start gap-2.5 text-xs text-slate-700">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isChecked}
+                                                        onChange={() => toggleTask(taskId)}
+                                                        className="mt-0.5 rounded text-[#ff2e63] focus:ring-[#ff2e63]/30 cursor-pointer"
+                                                    />
+                                                    <span className={isChecked ? "line-through text-slate-400" : ""}>{task}</span>
+                                                </li>
+                                            )
+                                        })}
+                                    </ul>
+                                </div>
+                            </div>
                         ))}
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginTop: "1rem" }}>
-                        <button
-                            onClick={() => { getResumePdf(interviewId) }}
-                            className='button primary-button' style={{ width: "100%", justifyContent: "center" }}>
-                            <svg height={"0.8rem"} style={{ marginRight: "0.5rem" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.6144 17.7956 11.492 15.7854C12.2731 13.9966 13.6789 12.5726 15.4325 11.7942L17.8482 10.7219C18.6162 10.381 18.6162 9.26368 17.8482 8.92277L15.5079 7.88394C13.7092 7.08552 12.2782 5.60881 11.5105 3.75894L10.6215 1.61673C10.2916.821765 9.19319.821767 8.8633 1.61673L7.97427 3.75892C7.20657 5.60881 5.77553 7.08552 3.97685 7.88394L1.63658 8.92277C.868537 9.26368.868536 10.381 1.63658 10.7219L4.0523 11.7942C5.80589 12.5726 7.21171 13.9966 7.99275 15.7854L8.8704 17.7956C9.20776 18.5682 10.277 18.5682 10.6144 17.7956ZM19.4014 22.6899 19.6482 22.1242C20.0882 21.1156 20.8807 20.3125 21.8695 19.8732L22.6299 19.5353C23.0412 19.3526 23.0412 18.7549 22.6299 18.5722L21.9121 18.2532C20.8978 17.8026 20.0911 16.9698 19.6586 15.9269L19.4052 15.3156C19.2285 14.8896 18.6395 14.8896 18.4628 15.3156L18.2094 15.9269C17.777 16.9698 16.9703 17.8026 15.956 18.2532L15.2381 18.5722C14.8269 18.7549 14.8269 19.3526 15.2381 19.5353L15.9985 19.8732C16.9874 20.3125 17.7798 21.1156 18.2198 22.1242L18.4667 22.6899C18.6473 23.104 19.2207 23.104 19.4014 22.6899Z"></path></svg>
-                            Download Resume
-                        </button>
-                        <button
-                            onClick={() => { window.location.href = "/assistant" }}
-                            className='button' style={{ background: "#202636", color: "#cbd5e1", border: "1px solid #2e3548", width: "100%", fontSize: "0.85rem", padding: "0.6rem 1rem" }}>
-                            💬 Ask AI About Topics
-                        </button>
-                        <button
-                            onClick={() => { window.location.href = "/mock-interview" }}
-                            className='button' style={{ background: "#1e293b", color: "#38bdf8", border: "1px solid rgba(56, 189, 248, 0.3)", width: "100%", fontSize: "0.85rem", padding: "0.6rem 1rem" }}>
-                            🎯 Start Mock Interview
-                        </button>
-                    </div>
-                </nav>
+                </div>
 
-                <div className='interview-divider' />
-
-                {/* ── Center Content ── */}
-                <main className='interview-content'>
-                    {activeNav === 'technical' && (
-                        <section>
-                            <div className='content-header'>
-                                <h2>Technical Questions</h2>
-                                <span className='content-header__count'>{report.technicalQuestions.length} questions</span>
-                            </div>
-                            <div className='q-list'>
-                                {report.technicalQuestions.map((q, i) => (
-                                    <QuestionCard key={i} item={q} index={i} />
-                                ))}
-                            </div>
-                        </section>
-                    )}
-
-                    {activeNav === 'behavioral' && (
-                        <section>
-                            <div className='content-header'>
-                                <h2>Behavioral Questions</h2>
-                                <span className='content-header__count'>{report.behavioralQuestions.length} questions</span>
-                            </div>
-                            <div className='q-list'>
-                                {report.behavioralQuestions.map((q, i) => (
-                                    <QuestionCard key={i} item={q} index={i} />
-                                ))}
-                            </div>
-                        </section>
-                    )}
-
-                    {activeNav === 'roadmap' && (
-                        <section>
-                            <div className='content-header'>
-                                <h2>Preparation Road Map</h2>
-                                <span className='content-header__count'>{report.preparationPlan.length}-day plan</span>
-                            </div>
-                            <div className='roadmap-list'>
-                                {report.preparationPlan.map((day) => (
-                                    <RoadMapDay key={day.day} day={day} />
-                                ))}
-                            </div>
-                        </section>
-                    )}
-                </main>
-
-                <div className='interview-divider' />
-
-                {/* ── Right Sidebar ── */}
-                <aside className='interview-sidebar'>
-
-                    {/* Match Score */}
-                    <div className='match-score'>
-                        <p className='match-score__label'>Match Score</p>
-                        <div className={`match-score__ring ${scoreColor}`}>
-                            <span className='match-score__value'>{report.matchScore}</span>
-                            <span className='match-score__pct'>%</span>
-                        </div>
-                        <p className='match-score__sub'>Strong match for this role</p>
-                    </div>
-
-                    <div className='sidebar-divider' />
-
-                    {/* Skill Gaps */}
-                    <div className='skill-gaps'>
-                        <p className='skill-gaps__label'>Skill Gaps</p>
-                        <div className='skill-gaps__list'>
-                            {report.skillGaps.map((gap, i) => (
-                                <span key={i} className={`skill-tag skill-tag--${gap.severity}`}>
-                                    {gap.skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
-                </aside>
             </div>
-        </div>
+        </main>
     )
 }
 

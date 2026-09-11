@@ -19,9 +19,9 @@ const Protected = ({ children }) => {
     }
 
     return (
-        <div className="protected-layout app-dark" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <div className="bg-[#f8f9ff] text-[#0f172a] font-body min-h-screen relative selection:bg-[#ff2e63] selection:text-white overflow-x-hidden">
             <Header />
-            <div style={{ flex: 1 }}>
+            <div className="md:pl-[260px] pt-16 flex flex-col min-h-screen">
                 {children}
             </div>
         </div>
