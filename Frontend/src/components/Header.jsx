@@ -1,16 +1,37 @@
 import React, { useState } from "react"
-import { Link, useLocation } from "react-router"
+import { Link, useLocation, useNavigate } from "react-router"
 import { useAuth } from "../features/auth/hooks/useAuth"
 
 const Header = () => {
     const { user, handleLogout } = useAuth()
     const location = useLocation()
+    const navigate = useNavigate()
     const [mobileOpen, setMobileOpen] = useState(false)
 
     const isActive = (path) => {
-        if (path === "/" && location.pathname === "/") return true
-        if (path !== "/" && location.pathname.startsWith(path)) return true
+        if (path === "/" && location.pathname === "/" && !location.hash) return true
+        if (path.includes("#") && location.hash === path.substring(path.indexOf("#"))) return true
+        if (!path.includes("#") && path !== "/" && location.pathname.startsWith(path)) return true
         return false
+    }
+
+    const scrollToSection = (e, path) => {
+        if (path.includes("#")) {
+            e.preventDefault()
+            const hash = path.substring(path.indexOf("#"))
+            const targetId = hash.replace("#", "")
+
+            if (location.pathname !== "/") {
+                navigate("/" + hash)
+            } else {
+                window.location.hash = hash
+                const el = document.getElementById(targetId)
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth" })
+                }
+            }
+            if (mobileOpen) setMobileOpen(false)
+        }
     }
 
     const navItems = [
@@ -23,23 +44,22 @@ const Header = () => {
 
     return (
         <>
-            {/* Ambient Background Glows matching Stitch */}
-            <div className="fixed top-[-10%] left-[15%] w-[42rem] h-[42rem] bg-gradient-to-br from-[#ff2e63]/10 via-[#c084fc]/12 to-transparent rounded-full blur-[130px] pointer-events-none -z-20" />
-            <div className="fixed bottom-[-10%] right-[8%] w-[40rem] h-[40rem] bg-gradient-to-tr from-[#38bdf8]/12 via-[#818cf8]/12 to-[#ff3366]/08 rounded-full blur-[140px] pointer-events-none -z-20" />
-            <div className="fixed top-[32%] right-[4%] w-[26rem] h-[26rem] bg-gradient-to-bl from-[#ff2e63]/08 via-[#a78bfa]/10 to-transparent rounded-full blur-[110px] pointer-events-none -z-20" />
-
-            {/* Floating Opalescent Specular Lenses */}
-            <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden -z-10 select-none">
-                <div className="visionos-pink-lens float-lens-1 absolute top-[14%] right-[16%] hidden lg:block w-20 h-20 rounded-full pointer-events-auto">
-                    <div className="absolute top-2 left-2.5 w-6 h-3 rounded-full bg-white/80 blur-[0.8px] -rotate-12" />
-                </div>
-                <div className="visionos-pink-lens float-lens-2 absolute bottom-[22%] left-[20%] hidden md:block w-16 h-16 rounded-full pointer-events-auto">
-                    <div className="absolute top-1.5 left-2 w-5 h-2.5 rounded-full bg-white/80 blur-[0.6px] -rotate-15" />
-                </div>
-            </div>
+            {/* Lightweight Ambient Background Mesh (Fast, zero GPU lag) */}
+            <div
+                aria-hidden="true"
+                className="fixed inset-0 pointer-events-none -z-20 overflow-hidden"
+                style={{
+                    background: `
+                        radial-gradient(circle at 18% 10%, rgba(255, 46, 99, 0.07) 0%, transparent 35%),
+                        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 30%, rgba(167, 139, 250, 0.06) 0%, transparent 30%),
+                        #f8f9ff
+                    `
+                }}
+            />
 
             {/* Left Sidebar (Desktop) */}
-            <aside className="fixed top-0 left-0 bottom-0 w-[260px] bg-white/80 backdrop-blur-2xl border-r border-slate-200/80 z-50 flex-col justify-between hidden md:flex shadow-[4px_0_24px_rgba(15,23,42,0.03)]">
+            <aside className="fixed top-0 left-0 bottom-0 w-[260px] bg-white/85 backdrop-blur-md border-r border-slate-200/80 z-50 flex-col justify-between hidden md:flex shadow-[2px_0_16px_rgba(15,23,42,0.02)]">
                 <div className="flex flex-col w-full">
                     {/* Brand Logo Header */}
                     <div className="h-16 px-5 flex items-center justify-between border-b border-slate-200/70">
@@ -56,11 +76,13 @@ const Header = () => {
                     <nav className="flex flex-col gap-1 px-3 mt-4">
                         {navItems.map((item) => {
                             const active = isActive(item.path)
+                            const isHash = item.path.includes("#")
                             return (
                                 <Link
                                     key={item.name}
                                     to={item.path}
-                                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
+                                    onClick={(e) => isHash && scrollToSection(e, item.path)}
+                                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-colors duration-150 ${
                                         active
                                             ? "bg-[#ff2e63]/10 text-[#e11d48] font-semibold border border-[#ff2e63]/25 shadow-xs"
                                             : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent"
@@ -68,7 +90,7 @@ const Header = () => {
                                 >
                                     <span
                                         className={`material-symbols-outlined text-xl ${
-                                            active ? "text-[#e11d48]" : "text-slate-400 group-hover:text-slate-600"
+                                            active ? "text-[#e11d48]" : "text-slate-400"
                                         }`}
                                     >
                                         {item.icon}
@@ -82,7 +104,7 @@ const Header = () => {
 
                 {/* Bottom User Profile Card */}
                 <div className="p-4 border-t border-slate-200/70">
-                    <div className="p-3 rounded-2xl bg-white/90 border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div className="p-3 rounded-2xl bg-white/90 border border-slate-200/80 shadow-xs flex items-center justify-between">
                         <div className="flex items-center gap-2.5 overflow-hidden">
                             <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-slate-700 font-bold text-xs flex-shrink-0">
                                 {user?.username?.charAt(0).toUpperCase() || "U"}
@@ -133,7 +155,13 @@ const Header = () => {
                                     <Link
                                         key={item.name}
                                         to={item.path}
-                                        onClick={() => setMobileOpen(false)}
+                                        onClick={(e) => {
+                                            if (item.path.includes("#")) {
+                                                scrollToSection(e, item.path)
+                                            } else {
+                                                setMobileOpen(false)
+                                            }
+                                        }}
                                         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm ${
                                             isActive(item.path)
                                                 ? "bg-[#ff2e63]/10 text-[#e11d48] font-semibold"
@@ -162,7 +190,7 @@ const Header = () => {
             )}
 
             {/* Top Fixed Header */}
-            <header className="fixed top-0 right-0 left-0 md:left-[260px] h-16 bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 z-40 px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-[0_4px_16px_rgba(15,23,42,0.03)]">
+            <header className="fixed top-0 right-0 left-0 md:left-[260px] h-16 bg-white/85 backdrop-blur-md border-b border-slate-200/80 z-40 px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-[0_2px_8px_rgba(15,23,42,0.02)]">
                 <div className="flex items-center gap-3">
                     <button
                         aria-label="Open navigation drawer"

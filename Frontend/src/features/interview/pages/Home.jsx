@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
-import { useNavigate, Link } from "react-router"
+import { useNavigate, useLocation, Link } from "react-router"
 import { useInterview } from "../hooks/useInterview"
 import { useAuth } from "../../auth/hooks/useAuth"
 import { getAllMockInterviews } from "../../mockInterview/services/mockInterview.api"
@@ -8,6 +8,22 @@ const Home = () => {
     const { loading, generateReport, reports } = useInterview()
     const { user } = useAuth()
     const navigate = useNavigate()
+    const location = useLocation()
+
+    // Auto-scroll to hash target when navigating from another route
+    useEffect(() => {
+        if (location.hash) {
+            const targetId = location.hash.replace("#", "")
+            // Small delay to let DOM paint after route transition
+            const timer = setTimeout(() => {
+                const el = document.getElementById(targetId)
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+            }, 120)
+            return () => clearTimeout(timer)
+        }
+    }, [location.hash])
 
     const [jobDescription, setJobDescription] = useState("")
     const [selfDescription, setSelfDescription] = useState("")

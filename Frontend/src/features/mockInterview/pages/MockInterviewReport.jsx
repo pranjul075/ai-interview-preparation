@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useParams, Link } from "react-router"
 import { getMockInterviewReport, downloadMockInterviewPdf } from "../services/mockInterview.api"
-import "../style/mockInterview.scss"
 
 const MockInterviewReport = () => {
     const { id } = useParams()
@@ -47,19 +46,28 @@ const MockInterviewReport = () => {
 
     if (loading) {
         return (
-            <main className="loading-screen" style={{ minHeight: "80vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                <h1>Synthesizing your interview evaluation...</h1>
-                <p style={{ color: "#94a3b8", marginTop: "0.5rem" }}>Evaluating complete transcript across 6 performance dimensions...</p>
+            <main className="w-full flex-1 flex flex-col items-center justify-center py-20 px-4">
+                <span className="material-symbols-outlined text-4xl text-[#ff2e63] animate-spin mb-4">progress_activity</span>
+                <h1 className="text-xl font-bold text-slate-800 font-headline">Synthesizing your interview evaluation...</h1>
+                <p className="text-xs text-slate-500 mt-1">Evaluating transcript across 6 core performance dimensions.</p>
             </main>
         )
     }
 
     if (errorMsg || !session?.finalReport) {
         return (
-            <main style={{ maxWidth: "600px", margin: "4rem auto", textAlign: "center", padding: "2rem" }}>
-                <h2>Unable to load evaluation report</h2>
-                <p style={{ color: "#94a3b8", margin: "1rem 0" }}>{errorMsg || "The report for this interview could not be found."}</p>
-                <Link to="/" className="button primary-button">Return to Dashboard</Link>
+            <main className="max-w-xl mx-auto my-16 text-center p-8 glass-card rounded-3xl">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto mb-3">
+                    <span className="material-symbols-outlined text-2xl">error</span>
+                </div>
+                <h2 className="text-lg font-bold text-slate-900 font-headline mb-1">Unable to load evaluation report</h2>
+                <p className="text-xs text-slate-500 mb-6">{errorMsg || "The report for this interview could not be found."}</p>
+                <Link
+                    to="/"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ff2e63] to-[#e11d48] text-white font-semibold text-xs shadow-md shadow-[#ff2e63]/25"
+                >
+                    Return to Dashboard
+                </Link>
             </main>
         )
     }
@@ -71,11 +79,14 @@ const MockInterviewReport = () => {
         day: "numeric"
     })
 
-    const readinessClass = (report.interviewReadiness || "").toLowerCase().includes("ready")
-        ? "readiness-badge--ready"
-        : (report.interviewReadiness || "").toLowerCase().includes("developing")
-            ? "readiness-badge--developing"
-            : "readiness-badge--critical"
+    const readiness = report.interviewReadiness || "Developing"
+    const readinessBadgeColor = readiness.toLowerCase().includes("ready")
+        ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+        : readiness.toLowerCase().includes("almost")
+        ? "bg-sky-50 border-sky-200 text-sky-700"
+        : readiness.toLowerCase().includes("developing")
+        ? "bg-amber-50 border-amber-200 text-amber-700"
+        : "bg-rose-50 border-rose-200 text-rose-700"
 
     const dimensions = [
         { label: "Technical Knowledge", score: report.technicalScore || 0 },
@@ -87,168 +98,257 @@ const MockInterviewReport = () => {
     ]
 
     return (
-        <div className="mock-report-page">
-            {/* TOP HEADER & ACTIONS */}
-            <div className="report-top">
-                <div className="title-group">
-                    <h1>PrepAI <span className="highlight">Interview Report</span></h1>
-                    <p>
-                        {session.targetRole} &bull; {(session.interviewType || "Mixed").toUpperCase()} &bull; {session.duration} min &bull; {dateFormatted}
-                    </p>
-                </div>
+        <main className="w-full flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-[1200px] mx-auto">
+            <div className="flex flex-col w-full gap-8">
 
-                <div className="action-group">
-                    <button
-                        className="pdf-download-btn"
-                        onClick={handleDownloadPdf}
-                        disabled={downloading}
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        <span>{downloading ? "Generating PDF..." : "Download PDF Report"}</span>
-                    </button>
-
-                    <Link to="/mock-interview" className="dash-btn" style={{ background: "#202636" }}>
-                        New Interview
-                    </Link>
-
-                    <Link to="/" className="dash-btn">
-                        Dashboard
-                    </Link>
-                </div>
-            </div>
-
-            {/* OVERALL SCORE HERO */}
-            <div className="score-hero">
-                <div className="score-box">
-                    <div className="score-circle-lg">
-                        <span className="val">{report.overallScore || 0}</span>
-                        <span className="unit">/ 100</span>
-                    </div>
-                    <div className="score-details">
-                        <h3>Overall Performance Score</h3>
-                        <p>Aggregated across technical accuracy, communication, depth, and relevance</p>
-                    </div>
-                </div>
-
-                <div className={`readiness-badge ${readinessClass}`}>
-                    {report.interviewReadiness || "Developing"}
-                </div>
-            </div>
-
-            {/* PERFORMANCE DIMENSIONS BREAKDOWN */}
-            <div className="radar-grid">
-                {dimensions.map((dim, idx) => {
-                    const fillClass = dim.score >= 80 ? "fill--high" : dim.score >= 65 ? "fill--mid" : "fill--low"
-                    return (
-                        <div key={idx} className="metric-card">
-                            <div className="metric-header">
-                                <span className="label">{dim.label}</span>
-                                <span className="score-num">{dim.score} / 100</span>
-                            </div>
-                            <div className="metric-bar">
-                                <div className={`fill ${fillClass}`} style={{ width: `${dim.score}%` }} />
-                            </div>
+                {/* ── TOP HEADER & ACTIONS ── */}
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-2 font-code text-xs text-slate-500">
+                            <Link to="/" className="hover:text-slate-800 transition-colors">DASHBOARD</Link>
+                            <span>/</span>
+                            <span className="text-[#e11d48] font-semibold">MOCK INTERVIEW EVALUATION</span>
                         </div>
-                    )
-                })}
-            </div>
-
-            {/* EXECUTIVE PERFORMANCE ASSESSMENT */}
-            <div className="report-card">
-                <h2>
-                    <span>🎯</span> Executive Performance Assessment
-                </h2>
-                <p className="assessment-text">
-                    {report.overallAssessment}
-                </p>
-            </div>
-
-            {/* STRENGTHS & WEAKNESSES */}
-            <div className="report-card">
-                <div className="columns-2">
-                    <div className="strengths-box">
-                        <h3>✓ Demonstrated Strengths</h3>
-                        <ul>
-                            {(report.strengths || []).map((str, idx) => (
-                                <li key={idx}>{str}</li>
-                            ))}
-                        </ul>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-headline">
+                            PrepAI <span className="text-[#ff2e63]">Interview Report</span>
+                        </h1>
+                        <div className="flex items-center gap-2.5 text-xs text-slate-500 font-code flex-wrap">
+                            <span className="font-bold text-slate-800">{session.targetRole}</span>
+                            <span>•</span>
+                            <span className="uppercase font-semibold text-[#e11d48]">{session.interviewType || "Mixed"}</span>
+                            <span>•</span>
+                            <span>{session.duration} min session</span>
+                            <span>•</span>
+                            <span>{dateFormatted}</span>
+                        </div>
                     </div>
 
-                    <div className="weaknesses-box">
-                        <h3>⚠️ Areas for Improvement</h3>
-                        <ul>
-                            {(report.weaknesses || []).map((weak, idx) => (
-                                <li key={idx}>{weak}</li>
-                            ))}
-                        </ul>
+                    {/* Action buttons (Clean, no black spots, proper spacing) */}
+                    <div className="flex items-center gap-3 flex-wrap self-start lg:self-center">
+                        <button
+                            onClick={handleDownloadPdf}
+                            disabled={downloading}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#ff2e63] to-[#e11d48] hover:from-[#ff416c] hover:to-[#f43f5e] text-white font-semibold text-xs shadow-md shadow-[#ff2e63]/25 hover:shadow-[#ff2e63]/40 border border-white/20 transition-all disabled:opacity-60"
+                        >
+                            <span className="material-symbols-outlined text-base">download</span>
+                            <span>{downloading ? "Generating PDF..." : "Download PDF Report"}</span>
+                        </button>
+
+                        <Link
+                            to="/mock-interview"
+                            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 font-semibold text-xs shadow-xs transition-all"
+                        >
+                            <span className="material-symbols-outlined text-base text-[#ff2e63]">add</span>
+                            <span>New Interview</span>
+                        </Link>
+
+                        <Link
+                            to="/"
+                            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 font-semibold text-xs shadow-xs transition-all"
+                        >
+                            <span>Dashboard</span>
+                        </Link>
                     </div>
                 </div>
-            </div>
 
-            {/* TOPICS REQUIRING REINFORCEMENT */}
-            {report.weakTopics && report.weakTopics.length > 0 && (
-                <div className="report-card">
-                    <h2>
-                        <span>📚</span> Topics Requiring Reinforcement
-                    </h2>
-                    <div className="topics-tags">
-                        {report.weakTopics.map((topic, idx) => (
-                            <span key={idx} className="topic-pill">
-                                {topic}
+                {/* ── OVERALL SCORE HERO CARD ── */}
+                <div className="glass-card rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-white/95 shadow-md">
+                    <div className="flex items-center gap-6">
+                        {/* Big Score Circle */}
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-br from-[#ff2e63] to-[#e11d48] flex flex-col items-center justify-center text-white shadow-lg shadow-[#ff2e63]/30 flex-shrink-0">
+                            <span className="text-3xl sm:text-4xl font-extrabold font-code leading-none">
+                                {report.overallScore || 0}
                             </span>
-                        ))}
+                            <span className="text-[11px] font-code uppercase font-semibold opacity-90 mt-0.5">
+                                / 100
+                            </span>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-headline">
+                                Overall Performance Score
+                            </h3>
+                            <p className="text-xs sm:text-sm text-slate-600 max-w-md leading-relaxed">
+                                Aggregated evaluation across technical depth, problem-solving, communication clarity, and answer relevance.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col items-center sm:items-end gap-1.5">
+                        <span className="font-code text-[11px] uppercase tracking-wider text-slate-400 font-bold">
+                            INTERVIEW READINESS
+                        </span>
+                        <div className={`px-4 py-1.5 rounded-full border text-xs sm:text-sm font-bold font-code shadow-2xs ${readinessBadgeColor}`}>
+                            {readiness}
+                        </div>
                     </div>
                 </div>
-            )}
 
-            {/* ACTIONABLE RECOMMENDATIONS */}
-            {report.recommendations && report.recommendations.length > 0 && (
-                <div className="report-card">
-                    <h2>
-                        <span>🚀</span> Recommended Preparation Steps
-                    </h2>
-                    <ul className="recs-list">
-                        {report.recommendations.map((rec, idx) => (
-                            <li key={idx}>{rec}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
-            {/* FULL DIALOGUE TRANSCRIPT */}
-            {session.transcript && session.transcript.length > 0 && (
-                <div className="report-card">
-                    <details>
-                        <summary style={{ cursor: "pointer", fontWeight: "700", color: "#38bdf8", fontSize: "1rem" }}>
-                            View Full Interview Transcript ({session.transcript.length} turns)
-                        </summary>
-                        <div style={{ marginTop: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            {session.transcript.map((turn, idx) => (
-                                <div
-                                    key={idx}
-                                    style={{
-                                        padding: "1rem",
-                                        borderRadius: "0.6rem",
-                                        background: turn.role === "interviewer" ? "#13151f" : "#202636",
-                                        borderLeft: turn.role === "interviewer" ? "3px solid #e11d48" : "3px solid #38bdf8",
-                                        fontSize: "0.92rem",
-                                        lineHeight: 1.6
-                                    }}
-                                >
-                                    <div style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: "800", marginBottom: "0.3rem", textTransform: "uppercase" }}>
-                                        {turn.role === "interviewer" ? `Interviewer (Q: ${turn.topic || "Discussion"})` : "Candidate"}
+                {/* ── PERFORMANCE DIMENSIONS BREAKDOWN ── */}
+                <div className="flex flex-col gap-3">
+                    <h3 className="text-sm font-bold font-code text-slate-700 uppercase tracking-wider">
+                        Core Competency Matrix
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {dimensions.map((dim, idx) => {
+                            const barColor = dim.score >= 80 ? "bg-emerald-500" : dim.score >= 65 ? "bg-[#ff2e63]" : "bg-amber-500"
+                            return (
+                                <div key={idx} className="glass-card rounded-2xl p-4 flex flex-col gap-2.5 shadow-2xs">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-semibold text-slate-700">{dim.label}</span>
+                                        <span className="font-code text-xs font-bold text-slate-900">{dim.score} / 100</span>
                                     </div>
-                                    <div style={{ color: "#f8fafc", whiteSpace: "pre-wrap" }}>
-                                        {turn.text}
+                                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200/70">
+                                        <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${dim.score}%` }} />
                                     </div>
                                 </div>
+                            )
+                        })}
+                    </div>
+                </div>
+
+                {/* ── EXECUTIVE ASSESSMENT ── */}
+                {report.overallAssessment && (
+                    <div className="glass-card rounded-2xl p-6 flex flex-col gap-2 shadow-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-lg text-[#ff2e63]">psychology</span>
+                            <h2 className="text-sm font-bold font-code uppercase text-slate-800 tracking-wider">
+                                Executive Performance Assessment
+                            </h2>
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mt-1">
+                            {report.overallAssessment}
+                        </p>
+                    </div>
+                )}
+
+                {/* ── STRENGTHS & WEAKNESSES ── */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Strengths */}
+                    <div className="glass-card rounded-2xl p-6 flex flex-col gap-3 shadow-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs">✓</span>
+                            <h3 className="text-sm font-bold font-code uppercase text-emerald-700 tracking-wider">
+                                Demonstrated Strengths
+                            </h3>
+                        </div>
+                        <ul className="space-y-2 mt-1">
+                            {(report.strengths || []).map((str, idx) => (
+                                <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-slate-700">
+                                    <span className="text-emerald-500 font-bold">•</span>
+                                    <span className="leading-relaxed">{str}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Areas for Improvement */}
+                    <div className="glass-card rounded-2xl p-6 flex flex-col gap-3 shadow-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xs">⚠️</span>
+                            <h3 className="text-sm font-bold font-code uppercase text-amber-700 tracking-wider">
+                                Areas for Improvement
+                            </h3>
+                        </div>
+                        <ul className="space-y-2 mt-1">
+                            {(report.weaknesses || []).map((weak, idx) => (
+                                <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-slate-700">
+                                    <span className="text-amber-500 font-bold">•</span>
+                                    <span className="leading-relaxed">{weak}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                {/* ── TOPICS REQUIRING REINFORCEMENT ── */}
+                {report.weakTopics && report.weakTopics.length > 0 && (
+                    <div className="glass-card rounded-2xl p-6 flex flex-col gap-3 shadow-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-lg text-rose-500">menu_book</span>
+                            <h2 className="text-sm font-bold font-code uppercase text-slate-800 tracking-wider">
+                                Topics Requiring Reinforcement
+                            </h2>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                            {report.weakTopics.map((topic, idx) => (
+                                <span key={idx} className="px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 font-code text-xs font-semibold">
+                                    {topic}
+                                </span>
                             ))}
                         </div>
-                    </details>
-                </div>
-            )}
-        </div>
+                    </div>
+                )}
+
+                {/* ── RECOMMENDED PREPARATION STEPS ── */}
+                {report.recommendations && report.recommendations.length > 0 && (
+                    <div className="glass-card rounded-2xl p-6 flex flex-col gap-3 shadow-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-lg text-[#ff2e63]">rocket_launch</span>
+                            <h2 className="text-sm font-bold font-code uppercase text-slate-800 tracking-wider">
+                                Recommended Action Steps
+                            </h2>
+                        </div>
+                        <ul className="space-y-2.5 mt-1">
+                            {report.recommendations.map((rec, idx) => (
+                                <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-slate-700">
+                                    <span className="w-5 h-5 rounded-md bg-[#ff2e63]/10 text-[#ff2e63] flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                                        {idx + 1}
+                                    </span>
+                                    <span className="leading-relaxed">{rec}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {/* ── FULL DIALOGUE TRANSCRIPT ── */}
+                {session.transcript && session.transcript.length > 0 && (
+                    <div className="glass-card rounded-2xl p-6 shadow-xs">
+                        <details className="group">
+                            <summary className="list-none flex items-center justify-between cursor-pointer font-bold text-sm text-slate-900 font-headline">
+                                <span className="flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-base text-[#ff2e63]">forum</span>
+                                    <span>View Complete Interview Transcript ({session.transcript.length} turns)</span>
+                                </span>
+                                <span className="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">
+                                    expand_more
+                                </span>
+                            </summary>
+
+                            <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-3">
+                                {session.transcript.map((turn, idx) => {
+                                    const isInterviewer = turn.role === "interviewer"
+                                    return (
+                                        <div
+                                            key={idx}
+                                            className={`p-4 rounded-2xl border ${
+                                                isInterviewer
+                                                    ? "bg-slate-50/80 border-slate-200/80 border-l-4 border-l-[#ff2e63]"
+                                                    : "bg-white border-slate-200 border-l-4 border-l-sky-500"
+                                            }`}
+                                        >
+                                            <div className="flex items-center justify-between text-[10px] font-code font-bold uppercase mb-1.5">
+                                                <span className={isInterviewer ? "text-[#ff2e63]" : "text-sky-600"}>
+                                                    {isInterviewer ? `Interviewer (${turn.topic || "Question"})` : "Candidate"}
+                                                </span>
+                                                <span className="text-slate-400">
+                                                    {new Date(turn.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                                </span>
+                                            </div>
+                                            <div className="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                                                {turn.text}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </details>
+                    </div>
+                )}
+
+            </div>
+        </main>
     )
 }
 
