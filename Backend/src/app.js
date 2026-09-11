@@ -38,6 +38,19 @@ const aiRouter = require("./routes/ai.routes")
 const mockInterviewRouter = require("./routes/mockInterview.routes")
 
 /* using all the routes here */
+app.get("/", (req, res) => {
+    res.json({
+        status: "success",
+        message: "Interview AI Backend API is up and running!",
+        frontendUrl: "http://localhost:5174",
+        endpoints: {
+            auth: "/api/auth",
+            interview: "/api/interview",
+            ai: "/api/ai",
+            mockInterview: "/api/mock-interview"
+        }
+    })
+})
 app.use("/api/auth", authRouter)
 app.use("/api/interview", interviewRouter)
 app.use("/api/ai", aiRouter)
