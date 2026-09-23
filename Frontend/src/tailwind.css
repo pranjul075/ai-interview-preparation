@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+@theme{
   /* Colors matching Stitch aesthetic */
   --color-surface: #f8f9ff;
   --color-surface-container: #e5eeff;
